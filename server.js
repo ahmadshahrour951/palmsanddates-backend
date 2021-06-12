@@ -3,6 +3,7 @@ const express = require('express');
 const morgan = require('morgan');
 
 const db = require('./app/models');
+const routes = require('./app/routes');
 
 const PORT = process.env.PORT || 8000;
 const app = express();
