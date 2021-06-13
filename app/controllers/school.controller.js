@@ -1,8 +1,18 @@
+const { body } = require('express-validator');
+
 const db = require('../models');
 
 const schoolController = {
+  validate,
   createSchool,
 };
+
+function validate(method) {
+  switch (method) {
+    case 'createSchool':
+      return [body('name').exists().notEmpty().isString().trim()];
+  }
+}
 
 async function createSchool(req, res, next) {
   try {
