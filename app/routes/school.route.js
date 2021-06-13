@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
 
-router.post('/', (req, res, next) => {
-  return res.status(201).json({ message: 'Hello, World!' });
-});
+const { schoolController } = require('../controllers')
+
+router.post('/', schoolController.createSchool);
 
 module.exports = router;
