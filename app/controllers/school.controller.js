@@ -5,6 +5,7 @@ const db = require('../models');
 const schoolController = {
   validate,
   createSchool,
+  getSchools,
 };
 
 function validate(method) {
@@ -22,6 +23,17 @@ async function createSchool(req, res, next) {
       message: 'School created successfully.',
       data: { id: createdSchool.id },
     });
+  } catch (error) {
+    next(error);
+  }
+}
+
+async function getSchools(req, res, next) {
+  try {
+    const schools = await db.schools.findAll();
+    return res
+      .status(200)
+      .json({ message: 'Schools successfully fetched.', data: { schools } });
   } catch (error) {
     next(error);
   }
