@@ -6,6 +6,7 @@ const userController = {
   validate,
   createUser,
   getUsers,
+  getUser,
 };
 
 function validate(method) {
@@ -60,6 +61,22 @@ async function getUsers(req, res, next) {
       message: 'Users successfully fetched.',
       data: { users },
     });
+  } catch (err) {
+    next(err);
+  }
+}
+
+async function getUser(req, res, next) {
+  try {
+    const user = db.users.findByPk(req.params.id);
+    if (!user) {
+      const error = new Error('User not found.');
+      error.statusCode = 404;
+      throw error;
+    }
+    return res
+      .status(200)
+      .json({ message: 'User successfully fetched.', data: { user } });
   } catch (err) {
     next(err);
   }
