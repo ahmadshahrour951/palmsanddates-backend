@@ -7,6 +7,7 @@ const residenceController = {
   createResidence,
   getResidences,
   getResidence,
+  updateResidence,
 };
 
 function validate(method) {
@@ -20,6 +21,16 @@ function validate(method) {
         body('city').exists().notEmpty().isString().trim(),
         body('street').exists().notEmpty().isString().trim(),
         body('postal_code').exists().notEmpty().isString().trim(),
+      ];
+    case 'updateResidence':
+      return [
+        body('name').optional().notEmpty().isString().trim(),
+        body('latitude').optional().notEmpty().isFloat(),
+        body('longitude').optional().notEmpty().isFloat(),
+        body('state').optional().notEmpty().isString().trim(),
+        body('city').optional().notEmpty().isString().trim(),
+        body('street').optional().notEmpty().isString().trim(),
+        body('postal_code').optional().notEmpty().isString().trim(),
       ];
   }
 }
@@ -57,12 +68,25 @@ async function getResidence(req, res, next) {
       error.statusCode = 404;
       throw error;
     }
-    return res
-      .status(200)
-      .json({
-        message: 'Residence successfully fetched.',
-        data: { residence },
-      });
+    return res.status(200).json({
+      message: 'Residence successfully fetched.',
+      data: { residence },
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+async function updateResidence(req, res, next) {
+  try {
+    const residence = await db.residences.findByPk(req.params.id);
+    if (!residence) {
+      const error = new Error('Residence not found.');
+      error.statusCode = 404;
+      throw error;
+    }
+    await residence.update(req.body);
+    return res.status(204).json({ message: 'Successfully updated residence.' });
   } catch (err) {
     next(err);
   }
