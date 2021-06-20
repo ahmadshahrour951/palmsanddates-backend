@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const schoolRoutes = require('./school.route');
+const residenceRoutes = require('./residence.route');
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // Root to redirect to '/games' until Landing Page creation
@@ -11,6 +12,7 @@ router.get('/', (req, res, next) => {
 });
 
 router.use('/schools', schoolRoutes);
+router.use('/residences', residenceRoutes);
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // Error page for error handling
