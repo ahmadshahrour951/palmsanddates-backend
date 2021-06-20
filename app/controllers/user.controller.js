@@ -7,6 +7,7 @@ const userController = {
   createUser,
   getUsers,
   getUser,
+  updateUser,
 };
 
 function validate(method) {
@@ -16,6 +17,14 @@ function validate(method) {
         body('email').exists().notEmpty().isString().trim().isEmail(),
         body('firstName').exists().notEmpty().isString().trim(),
         body('lastName').exists().notEmpty().isString().trim(),
+        body('residenceId').optional().isInt(),
+        body('schoolId').optional().isInt(),
+      ];
+    case 'updateUser':
+      return [
+        body('email').optional().isString().trim().isEmail(),
+        body('firstName').optional().notEmpty().isString().trim(),
+        body('lastName').optional().notEmpty().isString().trim(),
         body('residenceId').optional().isInt(),
         body('schoolId').optional().isInt(),
       ];
@@ -68,7 +77,7 @@ async function getUsers(req, res, next) {
 
 async function getUser(req, res, next) {
   try {
-    const user = db.users.findByPk(req.params.id);
+    const user = await db.users.findByPk(req.params.id);
     if (!user) {
       const error = new Error('User not found.');
       error.statusCode = 404;
@@ -77,6 +86,21 @@ async function getUser(req, res, next) {
     return res
       .status(200)
       .json({ message: 'User successfully fetched.', data: { user } });
+  } catch (err) {
+    next(err);
+  }
+}
+
+async function updateUser(req, res, next) {
+  try {
+    const user = await db.users.findByPk(req.params.id);
+    if (!user) {
+      const error = new Error('User not found.');
+      error.statusCode = 404;
+      throw error;
+    }
+    await user.update(req.body);
+    return res.status(204).json({ message: 'Successfully updated user.' });
   } catch (err) {
     next(err);
   }
