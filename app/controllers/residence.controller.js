@@ -6,6 +6,7 @@ const residenceController = {
   validate,
   createResidence,
   getResidences,
+  getResidence,
 };
 
 function validate(method) {
@@ -39,11 +40,28 @@ async function createResidence(req, res, next) {
 async function getResidences(req, res, next) {
   try {
     const residences = await db.residences.findAll();
+    return res.status(200).json({
+      message: 'Residences successfully fetched.',
+      data: { residences },
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+async function getResidence(req, res, next) {
+  try {
+    const residence = await db.residences.findByPk(req.params.id);
+    if (!residence) {
+      const error = new Error('Residence not found.');
+      error.statusCode = 404;
+      throw error;
+    }
     return res
       .status(200)
       .json({
-        message: 'Residences successfully fetched.',
-        data: { residences },
+        message: 'Residence successfully fetched.',
+        data: { residence },
       });
   } catch (err) {
     next(err);
