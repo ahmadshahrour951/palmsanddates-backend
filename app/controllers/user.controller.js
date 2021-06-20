@@ -5,6 +5,7 @@ const db = require('../models');
 const userController = {
   validate,
   createUser,
+  getUsers,
 };
 
 function validate(method) {
@@ -46,6 +47,18 @@ async function createUser(req, res, next) {
     return res.status(201).json({
       message: 'User created successfully.',
       data: { id: createdUser.id },
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+async function getUsers(req, res, next) {
+  try {
+    const users = await db.users.findAll();
+    return res.status(200).json({
+      message: 'Users successfully fetched.',
+      data: { users },
     });
   } catch (err) {
     next(err);
