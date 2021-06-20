@@ -67,6 +67,8 @@ async function updateSchool(req, res, next) {
       error.statusCode = 404;
       throw error;
     }
+    await school.update(req.body);
+    return res.status(204).json({ message: 'Successfully updated school.' });
   } catch (err) {
     next(err);
   }
