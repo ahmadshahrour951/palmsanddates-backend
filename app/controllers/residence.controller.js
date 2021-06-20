@@ -5,6 +5,7 @@ const db = require('../models');
 const residenceController = {
   validate,
   createResidence,
+  getResidences,
 };
 
 function validate(method) {
@@ -30,6 +31,20 @@ async function createResidence(req, res, next) {
       message: 'Residence created successfully.',
       data: { id: createdResidence.id },
     });
+  } catch (err) {
+    next(err);
+  }
+}
+
+async function getResidences(req, res, next) {
+  try {
+    const residences = await db.residences.findAll();
+    return res
+      .status(200)
+      .json({
+        message: 'Residences successfully fetched.',
+        data: { residences },
+      });
   } catch (err) {
     next(err);
   }
