@@ -20,7 +20,7 @@ function validate(method) {
         body('state').exists().notEmpty().isString().trim(),
         body('city').exists().notEmpty().isString().trim(),
         body('street').exists().notEmpty().isString().trim(),
-        body('postal_code').exists().notEmpty().isString().trim(),
+        body('postalCode').exists().notEmpty().isString().trim(),
       ];
     case 'updateResidence':
       return [
@@ -30,7 +30,7 @@ function validate(method) {
         body('state').optional().notEmpty().isString().trim(),
         body('city').optional().notEmpty().isString().trim(),
         body('street').optional().notEmpty().isString().trim(),
-        body('postal_code').optional().notEmpty().isString().trim(),
+        body('postalCode').optional().notEmpty().isString().trim(),
       ];
   }
 }
