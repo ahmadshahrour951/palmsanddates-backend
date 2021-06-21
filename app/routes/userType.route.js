@@ -7,5 +7,6 @@ const { validate, createUserType, getUserTypes, updateUserType } =
 
 router.post('/', validate('createUserType'), createUserType);
 router.get('/', getUserTypes);
+router.get('/:id', getUserType);
 
 module.exports = router;

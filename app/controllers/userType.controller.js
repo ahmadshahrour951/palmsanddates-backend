@@ -6,6 +6,7 @@ const userTypeController = {
   validate,
   createUserType,
   getUserTypes,
+  getUserType,
 };
 
 function validate(method) {
@@ -41,4 +42,23 @@ async function getUserTypes(req, res, next) {
     next(err);
   }
 }
+
+async function getUserType(req, res, next) {
+  try {
+    const userType = db.userTypes.findByPk(req.params.id);
+    if (!userType) {
+      const error = new Error('User type not found.');
+      error.statusCode = 404;
+      throw error;
+    }
+
+    return res.status(200).json({
+      message: 'User type successfully fetched.',
+      data: { userType },
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
 module.exports = userTypeController;
