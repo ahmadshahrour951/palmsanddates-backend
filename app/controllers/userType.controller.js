@@ -7,12 +7,15 @@ const userTypeController = {
   createUserType,
   getUserTypes,
   getUserType,
+  updateUserType,
 };
 
 function validate(method) {
   switch (method) {
     case 'createUserType':
       return [body('name').exists().notEmpty().isString().trim()];
+    case 'updateUserType':
+      return [body('name').optional().isString().trim()];
   }
 }
 
@@ -56,6 +59,22 @@ async function getUserType(req, res, next) {
       message: 'User type successfully fetched.',
       data: { userType },
     });
+  } catch (err) {
+    next(err);
+  }
+}
+
+async function updateUserType(req, res, next) {
+  try {
+    const userType = db.userTypes.findByPk(req.params.id);
+    if (!userType) {
+      const error = new Error('User type not found.');
+      error.statusCode = 404;
+      throw error;
+    }
+
+    await userType.update(req.body);
+    return res.status(204).json({ message: 'Successfully updated user type.' });
   } catch (err) {
     next(err);
   }
