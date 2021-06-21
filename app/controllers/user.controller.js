@@ -53,6 +53,13 @@ async function createUser(req, res, next) {
       }
     }
 
+    const userType = await db.userTypes.findByPk(req.body.userTypeId)
+    if (!userType) {
+      const error = new Error('User Type Id provided was not found.')
+      error.statusCode = 404;
+      throw error;
+    }
+
     const createdUser = await db.users.create(newUser);
     return res.status(201).json({
       message: 'User created successfully.',
