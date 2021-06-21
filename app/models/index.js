@@ -23,12 +23,21 @@ db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
 db.users = require('./user.model')(sequelize, Sequelize);
+db.userTypes = require('./userType.model')(sequelize, Sequelize);
 db.schools = require('./school.model')(sequelize, Sequelize);
 db.residences = require('./residence.model')(sequelize, Sequelize);
+
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // Relationships
 /////////////////////////////////////////////////////////////////////////////////////////
+db.users.belongsTo(db.userTypes, {
+  foreignKey: {
+    allowNull: false
+  }
+});
+db.userTypes.hasMany(db.users);
+
 db.users.belongsTo(db.schools)
 db.schools.hasMany(db.users)
 
@@ -42,6 +51,7 @@ db.schools.belongsToMany(db.residences, {
 db.residences.belongsToMany(db.schools, {
   through: 'school_residences',
 });
+
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // Test database connection
