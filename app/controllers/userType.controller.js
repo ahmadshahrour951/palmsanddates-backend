@@ -5,6 +5,7 @@ const db = require('../models');
 const userTypeController = {
   validate,
   createUserType,
+  getUserTypes,
 };
 
 function validate(method) {
@@ -29,4 +30,15 @@ async function createUserType(req, res, next) {
   }
 }
 
+async function getUserTypes(req, res, next) {
+  try {
+    const userTypes = db.userTypes.findAll();
+    return res.status(200).json({
+      message: 'User types successfully fetched.',
+      data: { userTypes },
+    });
+  } catch (err) {
+    next(err);
+  }
+}
 module.exports = userTypeController;
