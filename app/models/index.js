@@ -49,12 +49,18 @@ db.events.belongsTo(db.residences);
 db.residences.hasMany(db.events);
 
 db.events.belongsTo(db.users, {
+  as: 'creatorUser',
   foreignKey: {
     field: 'creator_user_id',
     allowNull: false,
   },
 });
-db.users.hasMany(db.events);
+db.users.hasMany(db.events, {
+  as: 'creatorUser',
+  foreignKey: {
+    field: 'creator_user_id',
+  },
+});
 
 db.users.belongsToMany(db.events, {
   through: 'user_events'
