@@ -5,6 +5,7 @@ const schoolRoutes = require('./school.route');
 const residenceRoutes = require('./residence.route');
 const userRoutes = require('./user.route');
 const userTypeRoutes = require('./userType.route');
+const eventRoutes = require('./event.route');
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // Root to redirect to '/games' until Landing Page creation
@@ -17,6 +18,7 @@ router.use('/schools', schoolRoutes);
 router.use('/residences', residenceRoutes);
 router.use('/users', userRoutes);
 router.use('/usertypes', userTypeRoutes);
+router.use('/events', eventRoutes);
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // Error page for error handling
@@ -24,7 +26,7 @@ router.use('/usertypes', userTypeRoutes);
 router.use((error, req, res, next) => {
   return res
     .status(error.statusCode || 500)
-    .json({ message: error.message || 'Internal Server Error' });
+    .json({ message: error.message || 'Internal Server Error', data: error.data || null  });
 });
 
 /////////////////////////////////////////////////////////////////////////////////////////
