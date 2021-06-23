@@ -2,11 +2,9 @@ const express = require('express');
 const router = express.Router();
 
 const { eventController } = require('../controllers');
-const {
-  validate,
-  createEvent,
-} = eventController;
+const { validate, createEvent, getEvents } = eventController;
 
-router.post('/', validate('createEvent'), createEvent)
+router.post('/', validate('createEvent'), createEvent);
+router.get('/', getEvents);
 
 module.exports = router;

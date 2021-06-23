@@ -3,7 +3,7 @@ const { body, validationResult } = require('express-validator');
 const { checkUserExists, checkEndTime } = require('../middlewares/validators');
 const db = require('../models');
 
-const eventController = { validate, createEvent };
+const eventController = { validate, createEvent, getEvents };
 
 function validate(method) {
   switch (method) {
@@ -34,9 +34,7 @@ async function createEvent(req, res, next) {
     const hasErrors = !result.isEmpty();
 
     if (hasErrors) {
-      const error = new Error(
-        `Errors in request body.`
-      );
+      const error = new Error(`Errors in request body.`);
       error.statusCode = 500;
       error.data = result.errors;
       throw error;
@@ -50,6 +48,17 @@ async function createEvent(req, res, next) {
         id: createdEvent.id,
       },
     });
+  } catch (err) {
+    next(err);
+  }
+}
+
+async function getEvents(req, res, next) {
+  try {
+    const events = db.events.findAll();
+    return res
+      .status(200)
+      .json({ message: 'Residences successfully fetched.', data: { events } });
   } catch (err) {
     next(err);
   }
