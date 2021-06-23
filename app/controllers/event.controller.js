@@ -1,9 +1,19 @@
-const { body, validationResult } = require('express-validator');
+const { param, body, validationResult } = require('express-validator');
 
-const { checkUserExists, checkEndTime } = require('../middlewares/validators');
+const {
+  checkUserExists,
+  checkEndTime,
+  checkEventExists,
+} = require('../middlewares/validators');
 const db = require('../models');
 
-const eventController = { validate, createEvent, getEvents, getEvent };
+const eventController = {
+  validate,
+  createEvent,
+  getEvents,
+  getEvent,
+  updateEvent,
+};
 
 function validate(method) {
   switch (method) {
@@ -25,6 +35,25 @@ function validate(method) {
           .custom(checkUserExists)
           .withMessage('User creator not found.'),
       ];
+    case 'updateEvent':
+      return [
+        param('id').exists().isInt().custom(checkEventExists),
+        body('name').optional().isString().trim(),
+        body('startTime').optional().isISO8601().toDate().isAfter(),
+        body('endTime')
+          .optional()
+          .isISO8601()
+          .toDate()
+          .isAfter()
+          .custom(checkEndTime)
+          .withMessage('startTime must be before endTime.'),
+        body('creatorUserId')
+          .optional()
+          .notEmpty()
+          .isInt()
+          .custom(checkUserExists)
+          .withMessage('User creator not found.'),
+      ];
   }
 }
 
@@ -34,9 +63,9 @@ async function createEvent(req, res, next) {
     const hasErrors = !result.isEmpty();
 
     if (hasErrors) {
-      const error = new Error(`Errors in request body.`);
+      const error = new Error(`Errors in request input.`);
       error.statusCode = 500;
-      error.data = result.errors;
+      error.data = { errors: result.errors };
       throw error;
     }
 
@@ -55,7 +84,7 @@ async function createEvent(req, res, next) {
 
 async function getEvents(req, res, next) {
   try {
-    const events = db.events.findAll();
+    const events = await db.events.findAll();
     return res
       .status(200)
       .json({ message: 'Residences successfully fetched.', data: { events } });
@@ -66,7 +95,7 @@ async function getEvents(req, res, next) {
 
 async function getEvent(req, res, next) {
   try {
-    const event = db.events.findByPk(req.params.id);
+    const event = await db.events.findByPk(req.params.id);
     if (!event) {
       const error = new Error('Event not found.');
       error.statusCode = 404;
@@ -75,6 +104,25 @@ async function getEvent(req, res, next) {
     return res
       .status(200)
       .json({ message: 'Event successfully fetched.', data: { event } });
+  } catch (err) {
+    next(err);
+  }
+}
+
+async function updateEvent(req, res, next) {
+  try {
+    const result = validationResult(req);
+    const hasErrors = !result.isEmpty();
+
+    if (hasErrors) {
+      const error = new Error(`Errors in request input.`);
+      error.statusCode = 500;
+      error.data = { errors: result.errors };
+      throw error;
+    }
+
+    await req.Event.update(req.body);
+    return res.status(204).json({ message: 'Successfully updated event.' });
   } catch (err) {
     next(err);
   }
