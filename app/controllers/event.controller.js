@@ -3,7 +3,7 @@ const { body, validationResult } = require('express-validator');
 const { checkUserExists, checkEndTime } = require('../middlewares/validators');
 const db = require('../models');
 
-const eventController = { validate, createEvent, getEvents };
+const eventController = { validate, createEvent, getEvents, getEvent };
 
 function validate(method) {
   switch (method) {
@@ -59,6 +59,22 @@ async function getEvents(req, res, next) {
     return res
       .status(200)
       .json({ message: 'Residences successfully fetched.', data: { events } });
+  } catch (err) {
+    next(err);
+  }
+}
+
+async function getEvent(req, res, next) {
+  try {
+    const event = db.events.findByPk(req.params.id);
+    if (!event) {
+      const error = new Error('Event not found.');
+      error.statusCode = 404;
+      throw error;
+    }
+    return res
+      .status(200)
+      .json({ message: 'Event successfully fetched.', data: { event } });
   } catch (err) {
     next(err);
   }
