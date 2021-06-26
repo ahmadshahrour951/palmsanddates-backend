@@ -5,6 +5,7 @@ const {
   checkEndTime,
   checkEventExists,
   checkParticipantDuplicate,
+  checkParticipantExists,
 } = require('../middlewares/validators');
 const db = require('../models');
 
@@ -15,6 +16,7 @@ const eventController = {
   getEvent,
   updateEvent,
   joinEvent,
+  leaveEvent,
 };
 
 function validate(method) {
@@ -66,6 +68,17 @@ function validate(method) {
           .custom(checkEventExists)
           .bail()
           .custom(checkParticipantDuplicate),
+      ];
+    case 'leaveEvent':
+      return [
+        body('userId').exists().notEmpty().isInt().custom(checkUserExists),
+        param('id')
+          .exists()
+          .notEmpty()
+          .isInt()
+          .custom(checkEventExists)
+          .bail()
+          .custom(checkParticipantExists),
       ];
   }
 }
@@ -154,6 +167,28 @@ async function joinEvent(req, res, next) {
     }
 
     await req.Event.addUser(req.User);
+
+    return res
+      .status(201)
+      .json({ message: 'User successfully added to event.', data: {} });
+  } catch (err) {
+    next(err);
+  }
+}
+
+async function leaveEvent(req, res, next) {
+  try {
+    const result = validationResult(req);
+    const hasErrors = !result.isEmpty();
+
+    if (hasErrors) {
+      const error = new Error(`Errors in request input.`);
+      error.statusCode = 500;
+      error.data = { errors: result.errors };
+      throw error;
+    }
+
+    await req.Event.removeUser(req.User);
 
     return res
       .status(201)
