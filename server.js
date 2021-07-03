@@ -1,6 +1,6 @@
 if (process.env.NODE_ENV !== 'production') require('dotenv-safe').config();
 const express = require('express');
-const morgan = require('morgan');
+const logger = require('morgan');
 
 const db = require('./app/db/models');
 const routes = require('./app/routes');
@@ -12,7 +12,7 @@ const app = express();
 // Register middleware
 /////////////////////////////////////////////////////////////////////////////////////////
 app.use(express.json());
-app.use(morgan('combined'));
+app.use(logger('dev', { skip: (req, res) => process.env.NODE_ENV === 'test' }));
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // Register all routes
@@ -45,8 +45,8 @@ const serverListen = async () => {
 const initServer = async () => {
   await testDbConnection();
   await serverListen();
-}
+};
 
-initServer()
+initServer();
 
 module.exports = app;
