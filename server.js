@@ -2,7 +2,7 @@ if (process.env.NODE_ENV !== 'production') require('dotenv-safe').config();
 const express = require('express');
 const morgan = require('morgan');
 
-const db = require('./app/models');
+const db = require('./app/db/models');
 const routes = require('./app/routes');
 
 const PORT = process.env.PORT || 8000;
@@ -22,11 +22,31 @@ app.use('/', routes);
 /////////////////////////////////////////////////////////////////////////////////////////
 // Start Database & Server
 /////////////////////////////////////////////////////////////////////////////////////////
-db.sequelize
-  .sync({ force: !(process.env.NODE_ENV === 'production') })
-  .then(() => {
-    app.listen(PORT, console.log(`Server started on port ${PORT}`));
-  })
-  .catch((err) => console.log('Error: ' + err));
+const testDbConnection = async () => {
+  try {
+    await db.sequelize.authenticate();
+    console.log(
+      'Connection to the database has been established successfully.'
+    );
+  } catch (err) {
+    console.error('Unable to connect to the database:', err);
+  }
+};
+
+const serverListen = async () => {
+  try {
+    await app.listen(PORT);
+    console.log('Server listening on Port', PORT);
+  } catch (err) {
+    console.error('Error in server setup', err);
+  }
+};
+
+const initServer = async () => {
+  await testDbConnection();
+  await serverListen();
+}
+
+initServer()
 
 module.exports = app;
