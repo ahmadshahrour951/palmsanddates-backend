@@ -7,7 +7,7 @@ const {
   checkParticipantDuplicate,
   checkParticipantExists,
 } = require('../middlewares/validators');
-const db = require('../models');
+const db = require('../db/models');
 
 const eventController = {
   validate,
@@ -32,7 +32,7 @@ function validate(method) {
           .isAfter()
           .custom(checkEndTime)
           .withMessage('startTime must be before endTime.'),
-        body('creatorUserId')
+        body('CreatorUserId')
           .exists()
           .notEmpty()
           .isInt()
@@ -60,7 +60,7 @@ function validate(method) {
       ];
     case 'joinEvent':
       return [
-        body('userId').exists().notEmpty().isInt().custom(checkUserExists),
+        body('UserId').exists().notEmpty().isInt().custom(checkUserExists),
         param('id')
           .exists()
           .notEmpty()
@@ -71,7 +71,7 @@ function validate(method) {
       ];
     case 'leaveEvent':
       return [
-        body('userId').exists().notEmpty().isInt().custom(checkUserExists),
+        body('UserId').exists().notEmpty().isInt().custom(checkUserExists),
         param('id')
           .exists()
           .notEmpty()
@@ -96,7 +96,7 @@ async function createEvent(req, res, next) {
     }
 
     const newEvent = req.body;
-    const createdEvent = await db.events.create(newEvent);
+    const createdEvent = await db.Event.create(newEvent);
     return res.status(201).json({
       message: 'Event successfully created.',
       data: {
@@ -110,7 +110,7 @@ async function createEvent(req, res, next) {
 
 async function getEvents(req, res, next) {
   try {
-    const events = await db.events.findAll();
+    const events = await db.Event.findAll();
     return res
       .status(200)
       .json({ message: 'Residences successfully fetched.', data: { events } });
@@ -121,7 +121,7 @@ async function getEvents(req, res, next) {
 
 async function getEvent(req, res, next) {
   try {
-    const event = await db.events.findByPk(req.params.id);
+    const event = await db.Event.findByPk(req.params.id);
     if (!event) {
       const error = new Error('Event not found.');
       error.statusCode = 404;

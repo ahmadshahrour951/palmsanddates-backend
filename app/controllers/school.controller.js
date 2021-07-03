@@ -1,6 +1,6 @@
 const { body } = require('express-validator');
 
-const db = require('../models');
+const db = require('../db/models');
 
 const schoolController = {
   validate,
@@ -22,7 +22,7 @@ function validate(method) {
 async function createSchool(req, res, next) {
   try {
     const newSchool = req.body;
-    const createdSchool = await db.schools.create(newSchool);
+    const createdSchool = await db.School.create(newSchool);
     return res.status(201).json({
       message: 'School created successfully.',
       data: { id: createdSchool.id },
@@ -34,7 +34,7 @@ async function createSchool(req, res, next) {
 
 async function getSchools(req, res, next) {
   try {
-    const schools = await db.schools.findAll();
+    const schools = await db.School.findAll();
     return res
       .status(200)
       .json({ message: 'Schools successfully fetched.', data: { schools } });
@@ -45,7 +45,7 @@ async function getSchools(req, res, next) {
 
 async function getSchool(req, res, next) {
   try {
-    const school = await db.schools.findByPk(req.params.id);
+    const school = await db.School.findByPk(req.params.id);
     if (!school) {
       const error = new Error('School not found.');
       error.statusCode = 404;
@@ -61,7 +61,7 @@ async function getSchool(req, res, next) {
 
 async function updateSchool(req, res, next) {
   try {
-    const school = await db.schools.findByPk(req.params.id);
+    const school = await db.School.findByPk(req.params.id);
     if (!school) {
       const error = new Error('School not found.');
       error.statusCode = 404;

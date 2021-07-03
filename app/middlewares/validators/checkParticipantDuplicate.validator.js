@@ -1,5 +1,3 @@
-const db = require('../../models');
-
 const checkParticipantDuplicate = async (value, { req, location, path }) => {
   const event = req.Event;
   const participants = await event.getUsers();

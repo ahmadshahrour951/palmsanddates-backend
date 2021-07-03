@@ -1,7 +1,7 @@
-const db = require('../../models');
+const db = require('../../db/models');
 
 const checkUserExists = async (value, { req, location, path }) => {
-  const user = await db.users.findByPk(value);
+  const user = await db.User.findByPk(value);
   const isValid = user !== undefined && user !== null;
 
   if (!isValid) {

@@ -1,6 +1,6 @@
 const { body } = require('express-validator');
 
-const db = require('../models');
+const db = require('../db/models');
 
 const residenceController = {
   validate,
@@ -38,7 +38,7 @@ function validate(method) {
 async function createResidence(req, res, next) {
   try {
     const newResidence = req.body;
-    const createdResidence = await db.residences.create(newResidence);
+    const createdResidence = await db.Residence.create(newResidence);
     return res.status(201).json({
       message: 'Residence created successfully.',
       data: { id: createdResidence.id },
@@ -50,7 +50,7 @@ async function createResidence(req, res, next) {
 
 async function getResidences(req, res, next) {
   try {
-    const residences = await db.residences.findAll();
+    const residences = await db.Residence.findAll();
     return res.status(200).json({
       message: 'Residences successfully fetched.',
       data: { residences },
@@ -62,7 +62,7 @@ async function getResidences(req, res, next) {
 
 async function getResidence(req, res, next) {
   try {
-    const residence = await db.residences.findByPk(req.params.id);
+    const residence = await db.Residence.findByPk(req.params.id);
     if (!residence) {
       const error = new Error('Residence not found.');
       error.statusCode = 404;
@@ -79,7 +79,7 @@ async function getResidence(req, res, next) {
 
 async function updateResidence(req, res, next) {
   try {
-    const residence = await db.residences.findByPk(req.params.id);
+    const residence = await db.Residence.findByPk(req.params.id);
     if (!residence) {
       const error = new Error('Residence not found.');
       error.statusCode = 404;
