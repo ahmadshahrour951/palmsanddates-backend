@@ -2,6 +2,7 @@ const { param, body, validationResult } = require('express-validator');
 
 const {
   checkUserExists,
+  checkResidenceExists,
   checkEndTime,
   checkEventExists,
   checkParticipantDuplicate,
@@ -34,10 +35,24 @@ function validate(method) {
           .withMessage('startTime must be before endTime.'),
         body('CreatorUserId')
           .exists()
+          .withMessage('CreatorUserId must be provided.')
+          .bail()
           .notEmpty()
           .isInt()
           .custom(checkUserExists)
           .withMessage('User creator not found.'),
+        body('ResidenceId')
+          .exists()
+          .withMessage('ResidenceId must be provided.')
+          .bail()
+          .notEmpty()
+          .withMessage('ResidenceId must not be empty.')
+          .bail()
+          .isInt()
+          .withMessage('ResidenceId must be an Integer.')
+          .bail()
+          .custom(checkResidenceExists)
+          .withMessage('Residence not found.'),
       ];
     case 'updateEvent':
       return [
