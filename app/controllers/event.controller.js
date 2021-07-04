@@ -25,20 +25,37 @@ function validate(method) {
     case 'createEvent':
       return [
         body('name').exists().notEmpty().isString().trim(),
-        body('startTime').exists().isISO8601().toDate().isAfter(),
+        body('startTime')
+          .exists()
+          .withMessage('startTime must be provided.')
+          .bail()
+          .isISO8601()
+          .withMessage('startTime must be a date with ISO8601 standards.')
+          .bail()
+          .toDate()
+          .isAfter()
+          .withMessage('startTime must be after current time.')
+          .bail(),
         body('endTime')
           .optional()
           .isISO8601()
+          .withMessage('endTime must be a date with ISO8601 standards.')
+          .bail()
           .toDate()
           .isAfter()
+          .withMessage('endTime must be after current time.')
+          .bail()
           .custom(checkEndTime)
-          .withMessage('startTime must be before endTime.'),
+          .withMessage('startTime must be before endTime.')
+          .bail(),
         body('CreatorUserId')
           .exists()
           .withMessage('CreatorUserId must be provided.')
           .bail()
           .notEmpty()
           .isInt()
+          .withMessage('CreatorUserId must be an integer.')
+          .bail()
           .custom(checkUserExists)
           .withMessage('User creator not found.'),
         body('ResidenceId')

@@ -59,7 +59,7 @@ describe('Create Events', async () => {
   const failEvent2 = {
     name: 'Pancakes and Eggs',
     startTime: new Date('2021-08-01 11:00:00'),
-    endTime: new Date('2021-08-01 1:00:00'),
+    endTime: new Date('2021-08-01 13:00:00'),
     ResidenceId: 1,
     createdAt: new Date('1995-11-18'),
     updatedAt: new Date('1995-11-18'),
@@ -67,9 +67,18 @@ describe('Create Events', async () => {
 
   const failEvent3 = {
     name: 'Pancakes and Eggs',
-    startTime: new Date('2021-08-01 1:00:00'),
-    endTime: new Date('2021-08-01 11:00:00'),
+    startTime: new Date('2021-08-01 11:00:00'),
+    endTime: new Date('2021-08-01 13:00:00'),
     CreatorUserId: 1,
+    createdAt: new Date('1995-11-18'),
+    updatedAt: new Date('1995-11-18'),
+  };
+
+  const failEvent4 = {
+    name: 'Pancakes and Eggs',
+    endTime: new Date('2021-08-01 13:00:00'),
+    CreatorUserId: 1,
+    ResidenceId: 1,
     createdAt: new Date('1995-11-18'),
     updatedAt: new Date('1995-11-18'),
   };
@@ -84,6 +93,25 @@ describe('Create Events', async () => {
     expect(status).to.equal(201);
     expect(message).to.be.a('string').to.equal('Event successfully created.');
     expect(id).to.be.a('number').to.equal(2);
+  });
+
+  it('should fail to create an event - No startTime', async () => {
+    const { body, status } = await request(app)
+      .post('/events')
+      .send(failEvent4);
+    const { data } = body;
+    const { errors } = data;
+
+    expect(status).to.equal(500);
+    expect(errors)
+      .to.be.an('array')
+      .to.include.deep.members([
+        {
+          msg: 'startTime must be provided.',
+          param: 'startTime',
+          location: 'body',
+        },
+      ]);
   });
 
   it('should fail to create an event - startTime after endTime', async () => {
