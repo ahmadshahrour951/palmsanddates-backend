@@ -1,11 +1,19 @@
+'use strict';
+const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  const Residence = sequelize.define(
-    'residence',
+  class Residence extends Model {
+    static associate(models) {
+      Residence.hasMany(models.User);
+      Residence.hasMany(models.Event);
+    }
+  }
+  Residence.init(
     {
       id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
+        allowNull: false,
       },
       name: {
         type: DataTypes.STRING,
@@ -38,6 +46,8 @@ module.exports = (sequelize, DataTypes) => {
       },
     },
     {
+      sequelize,
+      modelName: 'Residence',
       timestamps: true,
       underscored: true,
     }

@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
 
-const { userTypeController } = require('../controllers');
+const { usertypeController } = require('../controllers');
 const { validate, createUserType, getUserType, getUserTypes, updateUserType } =
-  userTypeController;
+  usertypeController;
 
 router.post('/', validate('createUserType'), createUserType);
 router.get('/', getUserTypes);

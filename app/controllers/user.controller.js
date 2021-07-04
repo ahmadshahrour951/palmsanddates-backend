@@ -1,6 +1,6 @@
 const { body } = require('express-validator');
 
-const db = require('../models');
+const db = require('../db/models');
 
 const userController = {
   validate,
@@ -35,8 +35,8 @@ async function createUser(req, res, next) {
   try {
     const newUser = req.body;
 
-    if (req.body.residenceId) {
-      const residence = await db.residences.findByPk(req.body.residenceId);
+    if (req.body.ResidenceId) {
+      const residence = await db.Residence.findByPk(req.body.ResidenceId);
       if (!residence) {
         const error = new Error('Residence Id provided was not found.');
         error.statusCode = 404;
@@ -44,8 +44,8 @@ async function createUser(req, res, next) {
       }
     }
 
-    if (req.body.schoolId) {
-      const school = await db.schools.findByPk(req.body.schoolId);
+    if (req.body.SchoolId) {
+      const school = await db.School.findByPk(req.body.SchoolId);
       if (!school) {
         const error = new Error('School Id provided was not found.');
         error.statusCode = 404;
@@ -53,14 +53,14 @@ async function createUser(req, res, next) {
       }
     }
 
-    const userType = await db.userTypes.findByPk(req.body.userTypeId)
+    const userType = await db.UserType.findByPk(req.body.UserTypeId)
     if (!userType) {
       const error = new Error('User Type Id provided was not found.')
       error.statusCode = 404;
       throw error;
     }
 
-    const createdUser = await db.users.create(newUser);
+    const createdUser = await db.User.create(newUser);
     return res.status(201).json({
       message: 'User created successfully.',
       data: { id: createdUser.id },
@@ -72,7 +72,7 @@ async function createUser(req, res, next) {
 
 async function getUsers(req, res, next) {
   try {
-    const users = await db.users.findAll();
+    const users = await db.User.findAll();
     return res.status(200).json({
       message: 'Users successfully fetched.',
       data: { users },
@@ -84,7 +84,7 @@ async function getUsers(req, res, next) {
 
 async function getUser(req, res, next) {
   try {
-    const user = await db.users.findByPk(req.params.id);
+    const user = await db.User.findByPk(req.params.id);
     if (!user) {
       const error = new Error('User not found.');
       error.statusCode = 404;
@@ -100,7 +100,7 @@ async function getUser(req, res, next) {
 
 async function updateUser(req, res, next) {
   try {
-    const user = await db.users.findByPk(req.params.id);
+    const user = await db.User.findByPk(req.params.id);
     if (!user) {
       const error = new Error('User not found.');
       error.statusCode = 404;

@@ -1,11 +1,18 @@
+'use strict';
+const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  const School = sequelize.define(
-    'school',
+  class UserType extends Model {
+    static associate(models) {
+      UserType.hasMany(models.User);
+    }
+  }
+  UserType.init(
     {
       id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
+        allowNull: false,
       },
       name: {
         type: DataTypes.STRING,
@@ -14,9 +21,11 @@ module.exports = (sequelize, DataTypes) => {
       },
     },
     {
+      sequelize,
+      modelName: 'UserType',
       timestamps: true,
       underscored: true,
     }
   );
-  return School;
-}
+  return UserType;
+};

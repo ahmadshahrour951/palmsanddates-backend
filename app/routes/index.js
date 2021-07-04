@@ -4,12 +4,9 @@ const router = express.Router();
 const schoolRoutes = require('./school.route');
 const residenceRoutes = require('./residence.route');
 const userRoutes = require('./user.route');
-const userTypeRoutes = require('./userType.route');
+const usertypeRoutes = require('./usertype.route');
 const eventRoutes = require('./event.route');
 
-/////////////////////////////////////////////////////////////////////////////////////////
-// Root to redirect to '/games' until Landing Page creation
-/////////////////////////////////////////////////////////////////////////////////////////
 router.get('/', (req, res, next) => {
   return res.status(200).json({ message: 'Hello, World!' });
 });
@@ -17,7 +14,7 @@ router.get('/', (req, res, next) => {
 router.use('/schools', schoolRoutes);
 router.use('/residences', residenceRoutes);
 router.use('/users', userRoutes);
-router.use('/usertypes', userTypeRoutes);
+router.use('/usertypes', usertypeRoutes);
 router.use('/events', eventRoutes);
 
 /////////////////////////////////////////////////////////////////////////////////////////

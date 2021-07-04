@@ -4,6 +4,7 @@ const checkEventExists = require('./checkEventExists.validator');
 const checkEndTime = require('./checkEndTime.validator');
 const checkParticipantDuplicate = require('./checkParticipantDuplicate.validator');
 const checkParticipantExists = require('./checkParticipantExists.validator');
+const checkResidenceExists = require('./checkResidenceExists.validator');
 
 module.exports = {
   checkUserExists,
@@ -12,4 +13,5 @@ module.exports = {
   checkEventExists,
   checkParticipantDuplicate,
   checkParticipantExists,
+  checkResidenceExists,
 };

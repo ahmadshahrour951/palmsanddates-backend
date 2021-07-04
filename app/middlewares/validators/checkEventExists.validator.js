@@ -1,7 +1,7 @@
-const db = require('../../models');
+const db = require('../../db/models');
 
 const checkEventExists = async (value, { req, location, path }) => {
-  const event = await db.events.findByPk(value);
+  const event = await db.Event.findByPk(value);
   const isValid = event !== undefined && event !== null;
 
   if (!isValid) {

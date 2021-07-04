@@ -1,6 +1,6 @@
 const { body } = require('express-validator');
 
-const db = require('../models');
+const db = require('../db/models');
 
 const userTypeController = {
   validate,
@@ -22,7 +22,7 @@ function validate(method) {
 async function createUserType(req, res, next) {
   try {
     const newUserType = req.body;
-    const createdUserType = await db.userTypes.create(newUserType);
+    const createdUserType = await db.UserType.create(newUserType);
     return res.status(201).json({
       message: 'User Type created successfully.',
       data: {
@@ -36,7 +36,7 @@ async function createUserType(req, res, next) {
 
 async function getUserTypes(req, res, next) {
   try {
-    const userTypes = db.userTypes.findAll();
+    const userTypes = await db.UserType.findAll();
     return res.status(200).json({
       message: 'User types successfully fetched.',
       data: { userTypes },
@@ -48,7 +48,7 @@ async function getUserTypes(req, res, next) {
 
 async function getUserType(req, res, next) {
   try {
-    const userType = db.userTypes.findByPk(req.params.id);
+    const userType = await db.UserType.findByPk(req.params.id);
     if (!userType) {
       const error = new Error('User type not found.');
       error.statusCode = 404;
@@ -66,7 +66,7 @@ async function getUserType(req, res, next) {
 
 async function updateUserType(req, res, next) {
   try {
-    const userType = db.userTypes.findByPk(req.params.id);
+    const userType = await db.UserType.findByPk(req.params.id);
     if (!userType) {
       const error = new Error('User type not found.');
       error.statusCode = 404;
