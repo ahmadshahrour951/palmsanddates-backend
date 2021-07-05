@@ -1,6 +1,7 @@
-const { body } = require('express-validator');
+const { param, body, validationResult } = require('express-validator');
 
 const db = require('../db/models');
+const { checkResidenceExists } = require('../middlewares/validators');
 
 const residenceController = {
   validate,
@@ -8,6 +9,7 @@ const residenceController = {
   getResidences,
   getResidence,
   updateResidence,
+  getEvents,
 };
 
 function validate(method) {
@@ -31,6 +33,10 @@ function validate(method) {
         body('city').optional().notEmpty().isString().trim(),
         body('street').optional().notEmpty().isString().trim(),
         body('postalCode').optional().notEmpty().isString().trim(),
+      ];
+    case 'getEvents':
+      return [
+        param('id').exists().isInt().bail().custom(checkResidenceExists).bail(),
       ];
   }
 }
@@ -87,6 +93,29 @@ async function updateResidence(req, res, next) {
     }
     await residence.update(req.body);
     return res.status(204).json({ message: 'Successfully updated residence.' });
+  } catch (err) {
+    next(err);
+  }
+}
+
+async function getEvents(req, res, next) {
+  try {
+    const result = validationResult(req);
+    const hasErrors = !result.isEmpty();
+
+    if (hasErrors) {
+      const error = new Error(`Errors in request input.`);
+      error.statusCode = 500;
+      error.data = { errors: result.errors };
+      throw error;
+    }
+
+    const events = await req.Residence.getEvents();
+
+    return res.status(200).json({
+      message: 'Successfully fetched residence events.',
+      data: { events },
+    });
   } catch (err) {
     next(err);
   }
