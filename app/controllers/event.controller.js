@@ -129,6 +129,7 @@ async function createEvent(req, res, next) {
 
     const newEvent = req.body;
     const createdEvent = await db.Event.create(newEvent);
+    await req.User.addEvent(createdEvent);
     return res.status(201).json({
       message: 'Event successfully created.',
       data: {
