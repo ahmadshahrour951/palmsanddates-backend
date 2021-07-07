@@ -1,6 +1,7 @@
-const { body } = require('express-validator');
+const { param, body, validationResult } = require('express-validator');
 
 const db = require('../db/models');
+const { checkUserExists } = require('../middlewares/validators');
 
 const userController = {
   validate,
@@ -8,6 +9,7 @@ const userController = {
   getUsers,
   getUser,
   updateUser,
+  getCreatedEvents,
 };
 
 function validate(method) {
@@ -27,6 +29,16 @@ function validate(method) {
         body('lastName').optional().notEmpty().isString().trim(),
         body('residenceId').optional().isInt(),
         body('schoolId').optional().isInt(),
+      ];
+    case 'getCreatedEvents':
+      return [
+        param('id')
+          .exists()
+          .bail()
+          .isInt()
+          .bail()
+          .custom(checkUserExists)
+          .bail(),
       ];
   }
 }
@@ -53,9 +65,9 @@ async function createUser(req, res, next) {
       }
     }
 
-    const userType = await db.UserType.findByPk(req.body.UserTypeId)
+    const userType = await db.UserType.findByPk(req.body.UserTypeId);
     if (!userType) {
-      const error = new Error('User Type Id provided was not found.')
+      const error = new Error('User Type Id provided was not found.');
       error.statusCode = 404;
       throw error;
     }
@@ -108,6 +120,28 @@ async function updateUser(req, res, next) {
     }
     await user.update(req.body);
     return res.status(204).json({ message: 'Successfully updated user.' });
+  } catch (err) {
+    next(err);
+  }
+}
+
+async function getCreatedEvents(req, res, next) {
+  try {
+    const result = validationResult(req);
+    const hasErrors = !result.isEmpty();
+
+    if (hasErrors) {
+      const error = new Error(`Errors in request input.`);
+      error.statusCode = 500;
+      error.data = { errors: result.errors };
+      throw error;
+    }
+    const events = await req.User.getCreatorUser();
+
+    return res.json({
+      message: 'Created events successfully fetched.',
+      data: { events },
+    });
   } catch (err) {
     next(err);
   }
