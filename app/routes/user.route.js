@@ -9,6 +9,7 @@ const {
   getUser,
   updateUser,
   getCreatedEvents,
+  getJoinedEvents,
 } = userController;
 
 router.post('/', validate('createUser'), createUser);
@@ -16,7 +17,11 @@ router.get('/', getUsers);
 router.get('/:id', getUser);
 router.put('/:id', validate('updateUser'), updateUser);
 
-router.get('/:id/created-events', validate('getCreatedEvents'), getCreatedEvents);
-
+router.get(
+  '/:id/created-events',
+  validate('getCreatedEvents'),
+  getCreatedEvents
+);
+router.get('/:id/joined-events', validate('getJoinedEvents'), getJoinedEvents);
 
 module.exports = router;

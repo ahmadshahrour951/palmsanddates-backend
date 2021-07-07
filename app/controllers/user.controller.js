@@ -10,6 +10,7 @@ const userController = {
   getUser,
   updateUser,
   getCreatedEvents,
+  getJoinedEvents,
 };
 
 function validate(method) {
@@ -31,6 +32,7 @@ function validate(method) {
         body('schoolId').optional().isInt(),
       ];
     case 'getCreatedEvents':
+    case 'getJoinedEvents':
       return [
         param('id')
           .exists()
@@ -141,6 +143,31 @@ async function getCreatedEvents(req, res, next) {
     return res.json({
       message: 'Created events successfully fetched.',
       data: { events },
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+async function getJoinedEvents(req, res, next) {
+  try {
+    const result = validationResult(req);
+    const hasErrors = !result.isEmpty();
+
+    if (hasErrors) {
+      const error = new Error(`Errors in request input.`);
+      error.statusCode = 500;
+      error.data = { errors: result.errors };
+      throw error;
+    }
+
+    const events = await req.User.getEvents();
+
+    return res.status(200).json({
+      message: 'Joined events successfully fetched.',
+      data: {
+        events,
+      },
     });
   } catch (err) {
     next(err);
