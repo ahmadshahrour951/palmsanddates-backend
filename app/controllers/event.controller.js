@@ -18,6 +18,7 @@ const eventController = {
   updateEvent,
   joinEvent,
   leaveEvent,
+  getJoinedUsers,
 };
 
 function validate(method) {
@@ -111,6 +112,10 @@ function validate(method) {
           .custom(checkEventExists)
           .bail()
           .custom(checkParticipantExists),
+      ];
+    case 'getJoinedUsers':
+      return [
+        param('id').exists().bail().isInt().bail().custom(checkEventExists),
       ];
   }
 }
@@ -226,6 +231,30 @@ async function leaveEvent(req, res, next) {
     return res
       .status(201)
       .json({ message: 'User successfully added to event.', data: {} });
+  } catch (err) {
+    next(err);
+  }
+}
+
+async function getJoinedUsers(req, res, next) {
+  try {
+    const result = validationResult(req);
+    const hasErrors = !result.isEmpty();
+
+    if (hasErrors) {
+      const error = new Error(`Errors in request input.`);
+      error.statusCode = 500;
+      error.data = { errors: result.errors };
+      throw error;
+    }
+
+    const users = await req.Event.getUsers();
+    return res.status(200).json({
+      message: 'Joined users successfully fetched.',
+      data: {
+        users,
+      },
+    });
   } catch (err) {
     next(err);
   }
