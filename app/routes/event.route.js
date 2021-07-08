@@ -10,6 +10,7 @@ const {
   updateEvent,
   joinEvent,
   leaveEvent,
+  getJoinedUsers,
 } = eventController;
 
 router.post('/', validate('createEvent'), createEvent);
@@ -18,5 +19,7 @@ router.get('/:id', getEvent);
 router.put('/:id', validate('updateEvent'), updateEvent);
 router.post('/:id/join', validate('joinEvent'), joinEvent);
 router.post('/:id/leave', validate('leaveEvent'), leaveEvent);
+
+router.get('/:id/users', validate('getJoinedUsers'), getJoinedUsers);
 
 module.exports = router;

@@ -1,6 +1,8 @@
-const { body } = require('express-validator');
+const { param, body, validationResult } = require('express-validator');
 
 const db = require('../db/models');
+
+const { checkSchoolExists } = require('../middlewares/validators');
 
 const schoolController = {
   validate,
@@ -8,6 +10,7 @@ const schoolController = {
   getSchools,
   getSchool,
   updateSchool,
+  getEvents,
 };
 
 function validate(method) {
@@ -16,6 +19,10 @@ function validate(method) {
       return [body('name').exists().notEmpty().isString().trim()];
     case 'updateSchool':
       return [body('name').optional().isString().trim()];
+    case 'getEvents':
+      return [
+        param('id').exists().bail().isInt().bail().custom(checkSchoolExists),
+      ];
   }
 }
 
@@ -69,6 +76,29 @@ async function updateSchool(req, res, next) {
     }
     await school.update(req.body);
     return res.status(204).json({ message: 'Successfully updated school.' });
+  } catch (err) {
+    next(err);
+  }
+}
+
+async function getEvents(req, res, next) {
+  try {
+    const result = validationResult(req);
+    const hasErrors = !result.isEmpty();
+
+    if (hasErrors) {
+      const error = new Error(`Errors in request input.`);
+      error.statusCode = 500;
+      error.data = { errors: result.errors };
+      throw error;
+    }
+    const events = await req.School.getEvents();
+    return res.status(200).json({
+      message: 'Events successfully fetched.',
+      data: {
+        events,
+      },
+    });
   } catch (err) {
     next(err);
   }
