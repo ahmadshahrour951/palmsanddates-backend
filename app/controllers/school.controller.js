@@ -83,15 +83,6 @@ async function updateSchool(req, res, next) {
 
 async function getEvents(req, res, next) {
   try {
-    const result = validationResult(req);
-    const hasErrors = !result.isEmpty();
-
-    if (hasErrors) {
-      const error = new Error(`Errors in request input.`);
-      error.statusCode = 500;
-      error.data = { errors: result.errors };
-      throw error;
-    }
     const events = await req.School.getEvents();
     return res.status(200).json({
       message: 'Events successfully fetched.',

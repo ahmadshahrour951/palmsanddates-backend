@@ -1,4 +1,4 @@
-const { param, body, validationResult } = require('express-validator');
+const { param, body } = require('express-validator');
 
 const {
   checkUserExists,
@@ -122,16 +122,6 @@ function validate(method) {
 
 async function createEvent(req, res, next) {
   try {
-    const result = validationResult(req);
-    const hasErrors = !result.isEmpty();
-
-    if (hasErrors) {
-      const error = new Error(`Errors in request input.`);
-      error.statusCode = 500;
-      error.data = { errors: result.errors };
-      throw error;
-    }
-
     const newEvent = req.body;
     const createdEvent = await db.Event.create(newEvent);
     await req.User.addEvent(createdEvent);
@@ -175,16 +165,6 @@ async function getEvent(req, res, next) {
 
 async function updateEvent(req, res, next) {
   try {
-    const result = validationResult(req);
-    const hasErrors = !result.isEmpty();
-
-    if (hasErrors) {
-      const error = new Error(`Errors in request input.`);
-      error.statusCode = 500;
-      error.data = { errors: result.errors };
-      throw error;
-    }
-
     await req.Event.update(req.body);
     return res.status(204).json({ message: 'Successfully updated event.' });
   } catch (err) {
@@ -194,18 +174,7 @@ async function updateEvent(req, res, next) {
 
 async function joinEvent(req, res, next) {
   try {
-    const result = validationResult(req);
-    const hasErrors = !result.isEmpty();
-
-    if (hasErrors) {
-      const error = new Error(`Errors in request input.`);
-      error.statusCode = 500;
-      error.data = { errors: result.errors };
-      throw error;
-    }
-
     await req.Event.addUser(req.User);
-
     return res
       .status(201)
       .json({ message: 'User successfully added to event.', data: {} });
@@ -216,18 +185,7 @@ async function joinEvent(req, res, next) {
 
 async function leaveEvent(req, res, next) {
   try {
-    const result = validationResult(req);
-    const hasErrors = !result.isEmpty();
-
-    if (hasErrors) {
-      const error = new Error(`Errors in request input.`);
-      error.statusCode = 500;
-      error.data = { errors: result.errors };
-      throw error;
-    }
-
     await req.Event.removeUser(req.User);
-
     return res
       .status(201)
       .json({ message: 'User successfully added to event.', data: {} });
@@ -238,16 +196,6 @@ async function leaveEvent(req, res, next) {
 
 async function getJoinedUsers(req, res, next) {
   try {
-    const result = validationResult(req);
-    const hasErrors = !result.isEmpty();
-
-    if (hasErrors) {
-      const error = new Error(`Errors in request input.`);
-      error.statusCode = 500;
-      error.data = { errors: result.errors };
-      throw error;
-    }
-
     const users = await req.Event.getUsers();
     return res.status(200).json({
       message: 'Joined users successfully fetched.',

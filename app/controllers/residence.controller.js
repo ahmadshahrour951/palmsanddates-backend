@@ -1,4 +1,4 @@
-const { param, body, validationResult } = require('express-validator');
+const { param, body } = require('express-validator');
 
 const db = require('../db/models');
 const { checkResidenceExists } = require('../middlewares/validators');
@@ -100,18 +100,7 @@ async function updateResidence(req, res, next) {
 
 async function getEvents(req, res, next) {
   try {
-    const result = validationResult(req);
-    const hasErrors = !result.isEmpty();
-
-    if (hasErrors) {
-      const error = new Error(`Errors in request input.`);
-      error.statusCode = 500;
-      error.data = { errors: result.errors };
-      throw error;
-    }
-
     const events = await req.Residence.getEvents();
-
     return res.status(200).json({
       message: 'Successfully fetched residence events.',
       data: { events },
