@@ -4,6 +4,7 @@ module.exports = (sequelize, DataTypes) => {
   class Event extends Model {
     static associate(models) {
       Event.belongsTo(models.Residence);
+      Event.belongsTo(models.School);
       Event.belongsTo(models.User, {
         as: 'CreatorUser',
         foreignKey: {

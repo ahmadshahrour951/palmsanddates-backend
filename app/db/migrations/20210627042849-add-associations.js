@@ -51,6 +51,16 @@ module.exports = {
       onUpdate: 'CASCADE',
       onDelete: 'SET NULL',
     });
+
+    await queryInterface.addColumn('events', 'school_id', {
+      type: Sequelize.INTEGER,
+      references: {
+        model: 'schools',
+        key: 'id',
+      },
+      onUpdate: 'CASCADE',
+      onDelete: 'SET NULL',
+    });
   },
 
   down: async (queryInterface, Sequelize) => {
