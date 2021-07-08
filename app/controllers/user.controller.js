@@ -1,4 +1,4 @@
-const { param, body, validationResult } = require('express-validator');
+const { param, body } = require('express-validator');
 
 const db = require('../db/models');
 const { checkUserExists } = require('../middlewares/validators');
@@ -129,17 +129,7 @@ async function updateUser(req, res, next) {
 
 async function getCreatedEvents(req, res, next) {
   try {
-    const result = validationResult(req);
-    const hasErrors = !result.isEmpty();
-
-    if (hasErrors) {
-      const error = new Error(`Errors in request input.`);
-      error.statusCode = 500;
-      error.data = { errors: result.errors };
-      throw error;
-    }
     const events = await req.User.getCreatorUser();
-
     return res.json({
       message: 'Created events successfully fetched.',
       data: { events },
@@ -151,18 +141,7 @@ async function getCreatedEvents(req, res, next) {
 
 async function getJoinedEvents(req, res, next) {
   try {
-    const result = validationResult(req);
-    const hasErrors = !result.isEmpty();
-
-    if (hasErrors) {
-      const error = new Error(`Errors in request input.`);
-      error.statusCode = 500;
-      error.data = { errors: result.errors };
-      throw error;
-    }
-
     const events = await req.User.getEvents();
-
     return res.status(200).json({
       message: 'Joined events successfully fetched.',
       data: {

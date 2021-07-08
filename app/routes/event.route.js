@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const { eventController } = require('../controllers');
+const { validateRules } = require('../middlewares/validators');
 const {
   validate,
   createEvent,
@@ -13,13 +14,18 @@ const {
   getJoinedUsers,
 } = eventController;
 
-router.post('/', validate('createEvent'), createEvent);
+router.post('/', validate('createEvent'), validateRules, createEvent);
 router.get('/', getEvents);
 router.get('/:id', getEvent);
-router.put('/:id', validate('updateEvent'), updateEvent);
-router.post('/:id/join', validate('joinEvent'), joinEvent);
-router.post('/:id/leave', validate('leaveEvent'), leaveEvent);
+router.put('/:id', validate('updateEvent'), validateRules, updateEvent);
+router.post('/:id/join', validate('joinEvent'), validateRules, joinEvent);
+router.post('/:id/leave', validate('leaveEvent'), validateRules, leaveEvent);
 
-router.get('/:id/users', validate('getJoinedUsers'), getJoinedUsers);
+router.get(
+  '/:id/users',
+  validate('getJoinedUsers'),
+  validateRules,
+  getJoinedUsers
+);
 
 module.exports = router;

@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const { schoolController } = require('../controllers');
+const { validateRules } = require('../middlewares/validators');
 const {
   validate,
   createSchool,
@@ -11,11 +12,11 @@ const {
   getEvents,
 } = schoolController;
 
-router.post('/', validate('createSchool'), createSchool);
+router.post('/', validate('createSchool'), validateRules, createSchool);
 router.get('/', getSchools);
 router.get('/:id', getSchool);
-router.put('/:id', validate('updateSchool'), updateSchool);
+router.put('/:id', validate('updateSchool'), validateRules, updateSchool);
 
-router.get('/:id/events', validate('getEvents'), getEvents);
+router.get('/:id/events', validate('getEvents'), validateRules, getEvents);
 
 module.exports = router;
