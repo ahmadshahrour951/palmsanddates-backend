@@ -19,9 +19,9 @@ RUN yarn run build
 # RUN yarn run test
 
 # ---------- Release ----------
-FROM base AS release
-
 RUN yarn run db:migrate:prod
+
+FROM base AS release
 
 COPY --from=builder /app/node_modules_production ./node_modules
 COPY --from=builder /app/dist ./dist
