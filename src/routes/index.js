@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router();
 
-const schoolRoutes = require('./school.route');
-const residenceRoutes = require('./residence.route');
-const userRoutes = require('./user.route');
-const usertypeRoutes = require('./usertype.route');
-const eventRoutes = require('./event.route');
+const schoolRoutes = require('./school.route.js');
+const residenceRoutes = require('./residence.route.js');
+const userRoutes = require('./user.route.js');
+const usertypeRoutes = require('./usertype.route.js');
+const eventRoutes = require('./event.route.js');
 
 router.get('/', (req, res, next) => {
   return res.status(200).json({ message: 'Hello, World!' });
