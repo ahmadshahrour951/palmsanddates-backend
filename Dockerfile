@@ -10,6 +10,7 @@ COPY package.json yarn.lock .babelrc .sequelizerc ./
 RUN yarn install --production
 RUN cp -R node_modules node_modules_production
 RUN yarn install
+RUN yarn run db:migrate:prod
 COPY ./src ./src
 RUN yarn run build
 
@@ -19,8 +20,6 @@ RUN yarn run build
 # RUN yarn run test
 
 # ---------- Release ----------
-RUN yarn run db:migrate:prod
-
 FROM base AS release
 
 COPY --from=builder /app/node_modules_production ./node_modules
