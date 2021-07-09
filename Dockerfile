@@ -6,7 +6,7 @@ WORKDIR /app
 # ---------- Builder ----------
 FROM base AS builder
 
-COPY package.json yarn.lock .babelrc ./
+COPY package.json yarn.lock .babelrc .sequelizerc ./
 RUN yarn install --production
 RUN cp -R node_modules node_modules_production
 RUN yarn install
