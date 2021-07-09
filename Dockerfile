@@ -14,12 +14,14 @@ COPY ./src ./src
 RUN yarn run build
 
 # ---------- Tests ----------
-FROM builder AS tests
+# FROM builder AS tests
 
-RUN yarn run test
+# RUN yarn run test
 
 # ---------- Release ----------
 FROM base AS release
+
+RUN yarn run db:migrate:prod
 
 COPY --from=builder /app/node_modules_production ./node_modules
 COPY --from=builder /app/dist ./dist
