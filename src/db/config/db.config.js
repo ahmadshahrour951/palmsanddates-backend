@@ -1,31 +1,32 @@
 ////////////////////////////////////////////////////////////////////////////////////////
 // Config options for database.
 /////////////////////////////////////////////////////////////////////////////////////////
-const { DB_USER, DB_PASSWORD, DB_HOST } = process.env;
+const { DB_USER, DB_PASSWORD, DB_HOST, DB_PORT } = process.env;
 
 module.exports = {
   development: {
     username: DB_USER,
     password: DB_PASSWORD,
-    database: 'palmsanddates_development',
     host: DB_HOST,
-    port: 5432,
+    port: DB_PORT,
+    database: 'palmsanddates_development',
     dialect: 'postgres',
   },
   test: {
     username: DB_USER,
     password: DB_PASSWORD,
-    database: 'palmsanddates_test',
     host: DB_HOST,
-    port: 5432,
+    port: DB_PORT,
+    database: 'palmsanddates_test',
     dialect: 'postgres',
-    logging: false
+    logging: false,
   },
   production: {
     username: DB_USER,
     password: DB_PASSWORD,
-    database: 'palmsanddates_production',
     host: DB_HOST,
+    port: DB_PORT,
+    database: 'palmsanddates_production',
     dialect: 'postgres',
     dialectOptions: {
       ssl: {

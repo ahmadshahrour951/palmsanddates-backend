@@ -18,7 +18,7 @@
     "pretest": "cross-env NODE_ENV=test yarn run db:reset:test",
     "db:reset:test": "yarn sequelize-cli db:drop && yarn sequelize-cli db:create && yarn sequelize-cli db:migrate && yarn sequelize-cli db:seed:all --seeders-path ./src/db/seeders/test",
     "db:create:test": "cross-env NODE_ENV=test yarn sequelize-cli db:create",
-    "db:migrate:prod": "yarn sequelize-cli db:migrate"
+    "db:migrate:prod": "yarn sequelize db:migrate"
   },
   "dependencies": {
     "express": "^4.17.1",
