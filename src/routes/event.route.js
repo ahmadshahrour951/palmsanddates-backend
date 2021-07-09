@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
 
-const { eventController } = require('../controllers');
-const { validateRules } = require('../middlewares/validators');
+const { eventController } = require('../controllers/index.js');
+const { validateRules } = require('../middlewares/validators/index.js');
 const {
   validate,
   createEvent,

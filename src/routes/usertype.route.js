@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
 
-const { usertypeController } = require('../controllers');
-const { validateRules } = require('../middlewares/validators');
+const { usertypeController } = require('../controllers/index.js');
+const { validateRules } = require('../middlewares/validators/index.js');
 const { validate, createUserType, getUserType, getUserTypes, updateUserType } =
   usertypeController;
 

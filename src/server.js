@@ -2,8 +2,8 @@ if (process.env.NODE_ENV !== 'production') require('dotenv-safe').config();
 const express = require('express');
 const logger = require('morgan');
 
-const db = require('./app/db/models');
-const routes = require('./app/routes');
+const db = require('./db/models/index.js');
+const routes = require('./routes/index.js');
 
 const PORT = process.env.PORT || 8000;
 const app = express();
