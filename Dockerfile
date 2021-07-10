@@ -12,7 +12,7 @@ RUN cp -R node_modules node_modules_production
 RUN yarn install
 COPY ./src ./src
 RUN yarn run build
-RUN yarn run db:migrate:prod
+
 
 # ---------- Tests ----------
 # FROM builder AS tests
@@ -20,6 +20,8 @@ RUN yarn run db:migrate:prod
 # RUN yarn run test
 
 # ---------- Release ----------
+ENV NODE_ENV production
+RUN yarn run db:migrate:prod
 FROM base AS release
 
 COPY --from=builder /app/node_modules_production ./node_modules
