@@ -20,11 +20,11 @@ RUN yarn run build
 # RUN yarn run test
 
 # ---------- Release ----------
-ENV NODE_ENV $NODE_ENV
-ENV DB_HOST $DB_HOST
-ENV DB_USER $DB_USER
-ENV DB_PASSWORD $DB_PASSWORD
-ENV DB_PORT $DB_PORT
+ARG NODE_ENV=${NODE_ENV}
+ARG DB_HOST=${DB_HOST}
+ARG DB_USER=${DB_USER}
+ARG DB_PASSWORD=${DB_PASSWORD}
+ARG DB_PORT=${DB_PORT}
 
 RUN yarn run db:migrate:prod
 
