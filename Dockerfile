@@ -35,7 +35,7 @@ FROM base AS release
 COPY --from=builder /app/node_modules_production ./node_modules
 COPY --from=builder /app/dist ./dist
 
-EXPOSE 443 
+EXPOSE 80 
 
 USER node
 
