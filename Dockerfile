@@ -21,6 +21,8 @@ RUN yarn run build
 
 # ---------- Release ----------
 ARG NODE_ENV=${NODE_ENV}
+ARG PORT=${PORT}
+
 ARG DB_HOST=${DB_HOST}
 ARG DB_USER=${DB_USER}
 ARG DB_PASSWORD=${DB_PASSWORD}
@@ -32,6 +34,8 @@ FROM base AS release
 
 COPY --from=builder /app/node_modules_production ./node_modules
 COPY --from=builder /app/dist ./dist
+
+EXPOSE 443 
 
 USER node
 
