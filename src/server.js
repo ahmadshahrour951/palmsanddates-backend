@@ -1,6 +1,8 @@
 if (process.env.NODE_ENV !== 'production') require('dotenv-safe').config();
 const express = require('express');
 const logger = require('morgan');
+const cors = require('cors');
+const helmet = require('helmet');
 
 const db = require('./db/models');
 const routes = require('./routes');
@@ -13,6 +15,8 @@ const app = express();
 /// ///////////////////////////////////////////////
 app.use(express.json());
 app.use(logger('dev', { skip: () => process.env.NODE_ENV === 'test' }));
+app.use(helmet());
+app.use(cors());
 
 /// ////////////////////////////////////////////////
 // Register all routes
@@ -25,7 +29,9 @@ app.use('/', routes);
 const testDbConnection = async () => {
   try {
     await db.sequelize.authenticate();
-    console.log('Connection to the database has been established successfully.');
+    console.log(
+      'Connection to the database has been established successfully.'
+    );
   } catch (err) {
     console.error('Unable to connect to the database:', err);
   }
