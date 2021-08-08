@@ -1,10 +1,12 @@
-const schoolController = require('./school.controller.js');
-const residenceController = require('./residence.controller.js');
-const userController = require('./user.controller.js');
-const usertypeController = require('./usertype.controller.js');
-const eventController = require('./event.controller.js')
+const mailController = require('./mail.controller');
+const schoolController = require('./school.controller');
+const residenceController = require('./residence.controller');
+const userController = require('./user.controller');
+const usertypeController = require('./usertype.controller');
+const eventController = require('./event.controller');
 
 module.exports = {
+  mailController,
   schoolController,
   residenceController,
   userController,
