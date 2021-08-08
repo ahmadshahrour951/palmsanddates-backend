@@ -1,11 +1,11 @@
-'use strict';
 const { Model } = require('sequelize');
+
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
     static associate(models) {
       User.belongsTo(models.UserType, {
         foreignKey: {
-          allowNull: false
+          allowNull: false,
         },
       });
       User.belongsTo(models.School);
@@ -45,6 +45,10 @@ module.exports = (sequelize, DataTypes) => {
       lastName: {
         type: DataTypes.STRING,
         allowNull: false,
+      },
+      profileImg: {
+        type: DataTypes.STRING,
+        allowNull: true,
       },
     },
     {
