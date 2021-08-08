@@ -13,6 +13,7 @@ const app = express();
 /// ////////////////////////////////////////////////
 // Register middleware
 /// ///////////////////////////////////////////////
+app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(logger('dev', { skip: () => process.env.NODE_ENV === 'test' }));
 app.use(helmet());
