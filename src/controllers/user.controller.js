@@ -1,17 +1,20 @@
 const { param, body } = require('express-validator');
+const multer = require('multer');
+const multerS3 = require('multer-s3');
+const aws = require('aws-sdk');
 
 const db = require('../db/models');
 const { checkUserExists } = require('../middlewares/validators');
 
-const userController = {
-  validate,
-  createUser,
-  getUsers,
-  getUser,
-  updateUser,
-  getCreatedEvents,
-  getJoinedEvents,
-};
+const { SPACES_ACCESS_KEY, SPACES_SECRET_KEY } = process.env;
+
+const spacesEndpoint = new aws.Endpoint('sfo3.digitaloceanspaces.com');
+
+const s3 = new aws.S3({
+  endpoint: spacesEndpoint,
+  accessKeyId: SPACES_ACCESS_KEY,
+  secretAccessKey: SPACES_SECRET_KEY,
+});
 
 function validate(method) {
   switch (method) {
@@ -42,12 +45,26 @@ function validate(method) {
           .custom(checkUserExists)
           .bail(),
       ];
+    default:
+      return [];
   }
 }
 
 async function createUser(req, res, next) {
   try {
-    const newUser = req.body;
+    const newUser = {
+      email: req.body.email,
+      firstName: req.body.firstName,
+      lastName: req.body.lastName,
+      UserTypeId: req.body.UserTypeId,
+    };
+
+    const userType = await db.UserType.findByPk(req.body.UserTypeId);
+    if (!userType) {
+      const error = new Error('User Type Id provided was not found.');
+      error.statusCode = 404;
+      throw error;
+    }
 
     if (req.body.ResidenceId) {
       const residence = await db.Residence.findByPk(req.body.ResidenceId);
@@ -56,6 +73,7 @@ async function createUser(req, res, next) {
         error.statusCode = 404;
         throw error;
       }
+      newUser.ResidenceId = req.body.ResidenceId;
     }
 
     if (req.body.SchoolId) {
@@ -65,13 +83,7 @@ async function createUser(req, res, next) {
         error.statusCode = 404;
         throw error;
       }
-    }
-
-    const userType = await db.UserType.findByPk(req.body.UserTypeId);
-    if (!userType) {
-      const error = new Error('User Type Id provided was not found.');
-      error.statusCode = 404;
-      throw error;
+      newUser.SchoolId = req.body.SchoolId;
     }
 
     const createdUser = await db.User.create(newUser);
@@ -81,6 +93,35 @@ async function createUser(req, res, next) {
     });
   } catch (err) {
     next(err);
+  }
+}
+
+async function uploadProfileImg(req, res, next) {
+  try {
+    let profileImgName;
+    const upload = multer({
+      storage: multerS3({
+        s3,
+        bucket: 'palmsanddates-user-images',
+        acl: 'public-read',
+        key: (request, file, cb) => {
+          console.log(file);
+          profileImgName = `${new Date().valueOf()}_${file.originalname}`;
+          cb(null, profileImgName);
+        },
+      }),
+    }).single('profileImg');
+
+    await upload(req);
+    const user = await db.User.findByPk(req.params.id);
+    await user.update({
+      profileImg: `https://palmsanddates-user-images.sfo3.cdn.digitaloceanspaces.com/${profileImgName}`,
+    });
+    return res
+      .status(204)
+      .json({ message: 'Successfully uploaded profile image.', data: {} });
+  } catch (error) {
+    next(error);
   }
 }
 
@@ -152,5 +193,16 @@ async function getJoinedEvents(req, res, next) {
     next(err);
   }
 }
+
+const userController = {
+  validate,
+  createUser,
+  getUsers,
+  getUser,
+  updateUser,
+  getCreatedEvents,
+  getJoinedEvents,
+  uploadProfileImg,
+};
 
 module.exports = userController;

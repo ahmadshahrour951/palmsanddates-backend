@@ -1,8 +1,9 @@
 const express = require('express');
+const { validateRules } = require('../middlewares/validators');
+const { userController } = require('../controllers');
+
 const router = express.Router();
 
-const { userController } = require('../controllers/index.js');
-const { validateRules } = require('../middlewares/validators/index.js');
 const {
   validate,
   createUser,
@@ -11,6 +12,7 @@ const {
   updateUser,
   getCreatedEvents,
   getJoinedEvents,
+  uploadProfileImg,
 } = userController;
 
 router.post('/', validate('createUser'), validateRules, createUser);
@@ -30,5 +32,7 @@ router.get(
   validateRules,
   getJoinedEvents
 );
+
+router.put('/:id/profile-img', uploadProfileImg);
 
 module.exports = router;
