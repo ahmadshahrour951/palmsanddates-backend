@@ -12,5 +12,6 @@ router.post(
   sendContactUs
 );
 
+router.post('/subscribe', validate('subscribe'), validateRules, subscribe);
 
 module.exports = router;

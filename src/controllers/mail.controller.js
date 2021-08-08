@@ -1,5 +1,6 @@
 const mailgun = require('mailgun-js');
 const { body } = require('express-validator');
+const db = require('../db/models');
 
 const EMAIL = process.env.MAILGUN_EMAIL;
 const API_KEY = process.env.MAILGUN_API_KEY;
@@ -44,6 +45,19 @@ function validate(method) {
           .trim()
           .isLength({ max: 200 }),
       ];
+    case 'subscribe':
+      return [
+        body('email')
+          .exists()
+          .bail()
+          .notEmpty()
+          .bail()
+          .isString()
+          .bail()
+          .trim()
+          .isEmail()
+          .bail(),
+      ];
     default:
       return [];
   }
@@ -63,6 +77,17 @@ async function sendContactUs(req, res, next) {
     return res
       .status(201)
       .json({ message: 'Email successful sent.', data: {} });
+  } catch (err) {
+    next(err);
+  }
+}
+
+async function subscribe(req, res, next) {
+  try {
+    await db.Subscriber.create({ email: req.body.email });
+    return res
+      .status(201)
+      .json({ message: 'Email successfully subscribed.', data: {} });
   } catch (err) {
     next(err);
   }
